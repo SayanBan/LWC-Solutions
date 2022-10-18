@@ -1,0 +1,177 @@
+@istest  
+public class FlowActionHandler_Test {
+ @istest 
+    static void FlowActionMethod()
+    {
+      user runAsUserObj = TestDataFactory.getRunasUser();
+      system.runAs(runAsUserObj){
+        Account acct = new Account(Name= 'testacct');
+        insert acct;
+        Account acct1 = new Account(Name='TEST_ACCT1');
+        insert acct1;  
+        
+        List<tsve__Visual_Engagement_Report__c> visualHistoryList = new List<tsve__Visual_Engagement_Report__c>();
+        
+        tsve__Visual_Engagement_Report__c history = new tsve__Visual_Engagement_Report__c();
+        history.tsve__Session_Id__c = '5f34264305d4e9599f5e60f9'; 
+        history.tsve__Invite_Type__c = 'Video';
+        history.tsve__Session_Type__c = 'Video';
+        history.tsve__Reference_ID__c = acct1.id;
+        history.tsve__Agent_Type__c = '9846512';
+      //  history.tsve__Camera_Approved__c = '9846512';
+      //  history.tsve__Client_connected_to_session__c = '9846512';
+        history.tsve__Client_Language__c = '9846512';
+        history.tsve__Customer_Number__c = '9846513';
+       // history.tsve__Dashboard_Connected__c = '9846512';
+       // history.tsve__Desktop_Sharing_Approved__c = '9846512'; 
+        history.tsve__Device_Browser__c = '9846512';
+        history.tsve__Device_Type__c = '9846512';
+        history.tsve__Duration__c = '9846512';
+        history.tsve__Image_Upload_Reason__c = '9846512'; 
+        history.tsve__Invite_Destination__c = '9846512';
+    //    history.tsve__Last_Image__c = '9846512';
+     //   history.tsve__Live_Pointer_Download__c = '9846512';
+        history.tsve__Media_Type__c = '9846512';
+        history.tsve__Observation_End_Time__c = '9846512';
+        history.tsve__Observation_Start_Time__c = '9846512';
+        history.tsve__Observed_By__c = '9846512';
+       // history.tsve__Offline_Meeting__c = '9846512'; 
+        history.tsve__Reference_ID__c = '9846512';
+        history.tsve__Related_Record_ID__c = '9846512';
+        history.tsve__Session_Date_Time__c = '9846512';
+      //  history.tsve__Session_Status__c = '9846512';
+        history.tsve__SMS_Delivery_Time__c = '9846512';
+        history.tsve__SMS_Prompt_Response__c = '9846512';
+      //history.tsve__SMS_Delivered__c = '9846512';
+        history.tsve__Started_On__c = '9846512';
+        history.tsve__Started_On_Date__c = '9846512';
+        history.tsve__Started_On_Time__c = '9846512';
+        history.tsve__Status__c = '9846512';
+       // history.tsve__T_C_Approved__c = '9846512';
+        history.tsve__Time_to_Connect__c = '9846512';
+        history.tsve__Time_to_Start__c = '9846512';
+        history.tsve__Total_Observation_Duration__c = '9846512';
+        history.tsve__Video_Duration__c = '9846512';
+      //  history.tsve__Video_Received__c = '9846512';
+        history.tsve__Video_Traffic_MB__c = 123;
+        
+        visualHistoryList.add(history);
+        insert visualHistoryList;
+        
+        tsve__Visual_Engagement_Reports_Images__c  image = new tsve__Visual_Engagement_Reports_Images__c ();
+       // image.name = 'image test';
+        image.tsve__File_Name__c = 'filetest';
+        image.tsve__Related_Tags__c = 'No Fault Found (NFF)';
+        image.tsve__Session_Id__c = '5f34264305d4e9599f5e60f9';
+        image.tsve__Visual_Engagement_Report__c=history.id;
+        image.tsve__Visual_Engagement_Report__c = visualHistoryList[0].Id;
+        insert image;
+          
+          
+          
+          tsve__Visual_Engagement_Reports_Images__c  image1 = new tsve__Visual_Engagement_Reports_Images__c ();
+       // image.name = 'image test';
+        image1.tsve__File_Name__c = 'filetest';
+        image1.tsve__Related_Tags__c = 'No Fault Found (NFF)';
+        //image1.tsve__Session_Id__c = '5f34264305d4e9599f5e60f9';
+        image1.tsve__Visual_Engagement_Report__c=history.id;
+        
+        image1.tsve__Visual_Engagement_Report__c = visualHistoryList[0].Id;
+        insert image1;
+          
+          
+        
+        
+        tsve__Visual_Assistant_Invite__c techseeses = new tsve__Visual_Assistant_Invite__c ();
+        //techseeses.tsve__Refrence_Number__c = '5f34264305d4e9599f5e60f9';
+        techseeses.tsve__Sending_Method__c = 'InviteDestinationtest';
+        techseeses.tsve__Session_Id__c = '5f34264305d4e9599f5e60f9';
+        techseeses.tsve__Is_Open__c = false;
+        insert techseeses;
+          
+       
+        
+        ContentVersion cv=new Contentversion();
+        cv.title='ABC';
+        cv.PathOnClient ='test';
+        cv.versiondata=EncodingUtil.base64Decode('This is version data');
+        cv.FirstPublishLocationId = acct.id;
+        insert cv;
+        
+        List<ContentDocument> documents = [SELECT Id, Title, LatestPublishedVersionId FROM ContentDocument LIMIT 1];
+        
+        
+        
+        ContentDocumentLink cdl = New ContentDocumentLink();
+        cdl.LinkedEntityId = acct1.id;
+        cdl.ContentDocumentId = documents[0].Id;
+        cdl.shareType = 'V';
+        insert cdl;
+        
+        List<user> currentuser = [SELECT Id,Name FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1];
+        List<string> imageurl =new List<string>{image.Id};
+            List<string> imageurl1 =new List<string>{image1.Id};
+        List<string> sessionids =new List<string>{'5f34264305d4e9599f5e60f9'};
+            
+        Set<string> filenameset =new Set<string>{'filetest'};
+        Set<string> InviteDestinationset =new Set<string>{'InviteDestinationtest'};
+        Set<string> ocrset =new Set<string>{'OCRtest'};
+        Set<string> imagecontentset =new Set<string>{'imagecontenttest'};
+        Set<string> imageurlset =new Set<string>{image.Id};
+        list<string> refrenceIds =new list<string>{acct.id};
+        Set<string> tagset =new Set<string>{'465132015'};
+        Set<string> agentset =new Set<string>{currentuser[0].name};
+         tsve__Techsee_Accounts__c a = TestDataFactory.getTechseeAccountRec();
+        
+        //GetImageByReferenceId  class coverage
+        
+        List<GetImageByReferenceId.Request> listv=new List<GetImageByReferenceId.Request>();
+        GetImageByReferenceId.Request r = new GetImageByReferenceId.Request();
+        r.referenceId=acct.id;
+        r.recordId=acct.id;
+        r.ImageRecordId=image.Id;
+        listv.add(r);
+        
+        //GetImageBySessionId  class coverage
+        
+        List<GetImageBySessionId.Request> lists=new List<GetImageBySessionId.Request>();
+        GetImageBySessionId.Request rr = new GetImageBySessionId.Request();
+        rr.sessionId=image.tsve__Session_Id__c;
+        rr.recordId=acct.id;
+        rr.ImageRecordId=image.Id;
+        lists.add(rr);
+        
+         //GetImageByTag  class coverage
+        list<string> tagList= new list<string>();
+        tagList.add('No Fault Found (NFF)');
+        List<GetImageByTag.Request> TAGlists=new List<GetImageByTag.Request>();
+        GetImageByTag.Request ImageByTag = new GetImageByTag.Request();
+        ImageByTag.tagList=tagList;
+        ImageByTag.recordId=acct.id;
+        ImageByTag.ImageRecordId=image.Id;
+        TAGlists.add(ImageByTag);
+        String Abc=acct1.id;
+        
+        test.startTest();
+        Test.setMock(HttpCalloutMock.class, new MockCalloutResponses(200));
+        string accountName = a.tsve__Account_Name__c;
+          FlowActionHandler.tsve_getImageDetailsBySessionId(sessionids, imageurl1);
+        widgetCalloutHandler.ResponseJSON responseInfo = widgetCalloutHandler.getTokenForEndSessionApi(accountName);
+        FlowActionHandler.tsve_getImageDetailsByRefrenceId(refrenceIds, imageurl);
+        system.assertNotEquals('',FlowActionHandler.tsve_getImageDetailsByRefrenceId(refrenceIds, imageurl));
+        FlowActionHandler.tsve_getImageDetailsBySessionId(sessionids, imageurl);
+          FlowActionHandler.tsve_getImageHistoryUrls(Abc);
+          
+        FlowActionHandler.tsve_getImageDetailsByTag(tagset, imageurlset);
+        FlowActionHandler.attachImageLink(acct.id, sessionids);       
+        GetImageByReferenceId.getActionAutomationMethod(listv);
+        GetImageBySessionId.getActionAutomationMethos(lists);
+        GetImageByTag.getActionAutomationMethos(TAGlists);
+        test.stopTest();
+        
+        
+        
+        
+      }
+    }
+}

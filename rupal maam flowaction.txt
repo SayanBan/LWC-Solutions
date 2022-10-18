@@ -1,0 +1,429 @@
+Global with sharing class FlowActionHandler {
+    Global static String tsve_getImageDetailsBySessionId(List < String > SessionIds,list<string> ImageRecordId) {
+        
+        
+        if(
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Related_Tags__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__File_Name__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.Name.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Session_Id__c.isAccessible() 
+        ){
+            List < String > imageIds = new List<String>();
+            System.debug('...visualImage111'+[SELECT id,tsve__Related_Tags__c,
+                                                                         tsve__File_Name__c,
+                                                                         tsve__Session_Id__c,
+                                                                         Name
+                                                                         FROM tsve__Visual_Engagement_Reports_Images__c 
+                                                                         WHERE tsve__Session_Id__c IN:SessionIds and  id IN:ImageRecordId
+                                                                         WITH SECURITY_ENFORCED
+                                                                         LIMIT 10000]);
+            for(tsve__Visual_Engagement_Reports_Images__c visualImage : [SELECT id,tsve__Related_Tags__c,
+                                                                         tsve__File_Name__c,
+                                                                         tsve__Session_Id__c,
+                                                                         Name
+                                                                         FROM tsve__Visual_Engagement_Reports_Images__c 
+                                                                         WHERE tsve__Session_Id__c IN:SessionIds and  id IN:ImageRecordId
+                                                                         WITH SECURITY_ENFORCED
+                                                                         LIMIT 10000]){   
+                                                                             if(visualImage.tsve__File_Name__c != null){
+                                                                                 System.debug('.......ifcond');
+                                                                                 imageIds.add(visualImage.tsve__File_Name__c);   
+                                                                             } 
+                                                                         }
+            if(ImageIds.size()>0){
+                System.debug('.......ifcond1.....');
+                return tsve.FlowActionHandler.tsve_getImageDetailsByImageId(ImageIds);
+            }else{
+                return '{"Error":"false","StatusCode":"200","ErrorMessage":"No Image Found","Response":[]}';
+            }
+        }
+        return '{"Error":"true","StatusCode":"400","ErrorMessage":"No value Found","Response":[]}';
+    }
+    Global static String tsve_getImageDetailsByRefrenceId(List < String > refrenceIds,list<string> ImageRecordId) {
+        
+        
+        if(
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Related_Tags__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__File_Name__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.Name.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Session_Id__c.isAccessible() 
+        ){
+            List < String > imageIds = new List<String>();
+            System.debug('...visualImage'+[SELECT id,tsve__Related_Tags__c,
+                                                                         tsve__File_Name__c,
+                                                                         tsve__Reference_Id__c,
+                                                                         Name
+                                                                         FROM tsve__Visual_Engagement_Reports_Images__c 
+                                                                         WHERE tsve__Reference_Id__c IN:refrenceIds and  id IN:ImageRecordId
+                                                                         WITH SECURITY_ENFORCED
+                                                                         LIMIT 10000]);
+            for(tsve__Visual_Engagement_Reports_Images__c visualImage : [SELECT id,tsve__Related_Tags__c,
+                                                                         tsve__File_Name__c,
+                                                                         tsve__Reference_Id__c,
+                                                                         Name
+                                                                         FROM tsve__Visual_Engagement_Reports_Images__c 
+                                                                         WHERE tsve__Reference_Id__c IN:refrenceIds and  id IN:ImageRecordId
+                                                                         WITH SECURITY_ENFORCED
+                                                                         LIMIT 10000]){
+                                                                             
+                                                                             if(visualImage.tsve__File_Name__c != null){
+                                                                                 imageIds.add(visualImage.tsve__File_Name__c);   
+                                                                             } 
+                                                                         }
+            
+            if(ImageIds.size()>0){
+                return tsve.FlowActionHandler.tsve_getImageDetailsByImageId(ImageIds);
+            }else{
+                return '{"Error":"false","StatusCode":"200","ErrorMessage":"No Image Found","Response":[]}';
+            }
+        }
+        return '{"Error":"true","StatusCode":"400","ErrorMessage":"No value Found","Response":[]}';
+    }
+    Global static String tsve_getImageDetailsByTag(set<string> tagList,set<string> ImageRecordId){
+        system.debug('tagList-'+tagList);
+        list<string> imageIds = new list<string>();
+        if(
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Related_Tags__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__File_Name__c.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.Name.isAccessible() &&
+            Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Session_Id__c.isAccessible() 
+        ){
+            for (tsve__Visual_Engagement_Reports_Images__c visualImage : [SELECT tsve__Related_Tags__c, tsve__File_Name__c, 
+                                                                          tsve__Session_Id__c, Name
+                                                                          FROM tsve__Visual_Engagement_Reports_Images__c
+                                                                          WHERE id IN:ImageRecordId
+                                                                          WITH SECURITY_ENFORCED
+                                                                          LIMIT 10000]){
+                                                                              list<string> temp = new list<string>();
+                                                                              system.debug('visualImage'+visualImage); 	
+                                                                              if(visualImage.tsve__Related_Tags__c!=null){
+                                                                                  if(visualImage.tsve__Related_Tags__c.contains(';')){
+                                                                                      temp=visualImage.tsve__Related_Tags__c.split(';');
+                                                                                  }
+                                                                                  else{temp.add(visualImage.tsve__Related_Tags__c); }
+                                                                              }    
+                                                                              set<string> tempSet = new set<string>(temp);    
+                                                                              system.debug('tempSet'+tempSet);                             
+                                                                              if (visualImage.tsve__File_Name__c != null){
+                                                                                  //  for(string str:tempSet){
+                                                                                  system.debug('tagList'+tagList);        
+                                                                                  if (tempSet.containsall(tagList)){ //Taglist tagList
+                                                                                      system.debug('23six ***'+tagList);   
+                                                                                      imageIds.add(visualImage.tsve__File_Name__c);
+                                                                                  }
+                                                                                  // }
+                                                                              }
+                                                                              temp.clear();
+                                                                          }
+            
+            
+            
+            
+        }
+        
+        
+        if (!ImageIds.isempty()){
+            return tsve.FlowActionHandler.tsve_getImageDetailsByImageId(ImageIds);
+        } 
+        return '{ "Error ": "true ", "StatusCode ": "400 ", "ErrorMessage ": "No value Found ", "Response ":[]}';
+    }
+    Global static String tsve_getImageDetailsByImageId(List < String > ImageIds) {
+        try {
+            if(
+                Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Related_Tags__c.isAccessible() &&
+                Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__File_Name__c.isAccessible() &&
+                Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.Name.isAccessible() &&
+                Schema.sObjectType.tsve__Visual_Engagement_Reports_Images__c.fields.tsve__Session_Id__c.isAccessible() 
+            ){
+                List < String > sessionIds = new List<String>();
+                List < String > imageRecordId = new List<String>();
+                Set < String > refIds = new set<String>();
+                map<String,tsve__Visual_Engagement_Reports_Images__c> imageIDVsImageDetails =new map<String,tsve__Visual_Engagement_Reports_Images__c>();
+                map<String,tsve__NotificationsFromTechsee__c> imageIDVsOCRDetails =new map<String,tsve__NotificationsFromTechsee__c>();
+                map<String,List<note>> imageIDVsNotes =new map<String,List<note>>();
+                map<Id,String> imageNoteMap = new map<Id,String>();
+                map<String,String> imageIDVsImageURL =new map<String,String>();
+                
+                //  tsve__InviteTechSeeConfig__c EnableOCR= new tsve__InviteTechSeeConfig__c();
+                
+                for(tsve__Visual_Engagement_Reports_Images__c visualImage : [SELECT tsve__Related_Tags__c,
+                                                                             tsve__File_Name__c,
+                                                                             tsve__Session_Id__c,
+                                                                             Name,
+                                                                             tsve__Visual_Engagement_Report__c,
+                                                                             tsve__Visual_Engagement_Report__r.tsve__Reference_ID__c
+                                                                             FROM tsve__Visual_Engagement_Reports_Images__c 
+                                                                             WHERE tsve__File_Name__c IN:ImageIds
+                                                                             WITH SECURITY_ENFORCED
+                                                                             LIMIT 10000]){
+                                                                                 System.debug(visualImage);
+                                                                                 imageRecordId.add(visualImage.Id);
+                                                                                 if(!String.isBlank(visualImage.tsve__Session_Id__c)){
+                                                                                     sessionIds.add(visualImage.tsve__Session_Id__c);
+                                                                                 }
+                                                                                 if(!String.isBlank(visualImage.tsve__Visual_Engagement_Report__r.tsve__Reference_ID__c)){
+                                                                                     refIds.add(visualImage.tsve__Visual_Engagement_Report__r.tsve__Reference_ID__c);
+                                                                                 }
+                                                                                 
+                                                                                 if(!String.isBlank(visualImage.tsve__File_Name__c)){
+                                                                                     imageIDVsImageDetails.put(visualImage.tsve__File_Name__c,visualImage);
+                                                                                 }
+                                                                                 
+                                                                             }  
+                if(refIds.size()>0){
+                    // list<tsve.JsonImageParser> searchResponseList=new List<tsve.JsonImageParser>();
+                    map<String,List<tsve.PullHistoryWrapper.Images>> sessionIdVsImageURLList = new map<String,List<tsve.PullHistoryWrapper.Images>>();
+                    for(String refid :refIds){
+                        List<PullHistoryWrapper> ReportImageList= FlowActionHandler.tsve_getImageHistoryUrls(refid);
+                        
+                        System.debug('response:88 flow handler:'+ReportImageList);
+                        if(!ReportImageList.isempty()){
+                            System.debug('response:88 searchResponseList:'+ReportImageList);
+                            if(ReportImageList.size() > 0){
+                                List<PullHistoryWrapper.Images> images = new List<PullHistoryWrapper.Images>();
+                                for(integer i=0;i<ReportImageList.size();i++){
+                                    images = ReportImageList[i].images;
+                                    sessionIdVsImageURLList.put(ReportImageList[i].roomId,images); 
+                                    
+                                }
+                                //System.debug(searchResponseList[i].roomId);  
+                            } 
+                            
+                        }
+                        
+                        System.debug('sessionIdVsImageURLList::'+sessionIdVsImageURLList.size());
+                        
+                    }
+                    if(sessionIdVsImageURLList.size() > 0){
+                        for(String ImageId:ImageIds){
+                           
+                            if(sessionIdVsImageURLList.get(imageIDVsImageDetails.get(ImageId).tsve__Session_Id__c )!= null){
+                                for(PullHistoryWrapper.Images urldata :sessionIdVsImageURLList.get(imageIDVsImageDetails.get(ImageId).tsve__Session_Id__c)){
+                                    if(String.valueOf(urldata).contains(ImageId)){
+                                        //System.debug('Url::: '+urldata.url);
+                                        imageIDVsImageURL.put(ImageId,urldata.url);
+                                        break;
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                }
+                JSONGenerator responseData = JSON.createGenerator(true);
+                responseData.writeStartObject();
+                responseData.writeStringField('Error', 'false');
+                responseData.writeStringField('StatusCode', '200');
+                responseData.writeStringField('ErrorMessage', '');
+                
+                responseData.writeFieldName('Response');
+                responseData.writeStartArray();
+                for(String imageId : ImageIds){
+                    
+                    responseData.writeStartObject();
+                    tsve__Visual_Engagement_Reports_Images__c visualImageInstance;
+                    //system.debug('imageIDVsImageDetails:::'+imageIDVsImageDetails );
+                    //system.debug('imageId::'+imageId);
+                    if(imageIDVsImageDetails.get(imageId)!= null){
+                        visualImageInstance = imageIDVsImageDetails.get(imageId);
+                    }
+                    String body='';
+                    
+                    if(visualImageInstance != null && visualImageInstance.tsve__File_Name__c != null){
+                        responseData.writeStringField('ImageRecordId', String.valueOf(visualImageInstance.id));
+                        responseData.writeStringField('ImageName', String.valueOf(visualImageInstance.Name));
+                        responseData.writeStringField('ImageID', String.valueOf(visualImageInstance.tsve__File_Name__c));
+                        responseData.writeStringField('Imagefile', String.valueOf(visualImageInstance.tsve__File_Name__c));
+                    }else{
+                        responseData.writeStringField('ImageRecordId', '');
+                        responseData.writeStringField('ImageName', '');
+                        responseData.writeStringField('ImageID', '');
+                        responseData.writeStringField('Imagefile', '');
+                    }
+                    
+                    //system.debug('Imagesignedlink::'+imageIDVsImageURL.get(imageId));
+                    if(imageIDVsImageURL.get(imageId) != null){
+                        responseData.writeStringField('Imagesignedlink', imageIDVsImageURL.get(imageId));
+                    }else{
+                        responseData.writeStringField('Imagesignedlink', '');
+                    }
+                    
+                    
+                    responseData.writeEndObject();
+                }
+                responseData.writeEndArray();
+                responseData.writeEndObject();
+                String jsonbodyData = responseData.getAsString();
+                return jsonbodyData;             
+            }
+        } catch (Exception e) {
+            system.debug('---error message------' + e.getMessage());
+            system.debug('---error line #------' + e.getLineNumber());
+            return '{"Error":"true","StatusCode":"400","ErrorMessage":"'+e.getMessage()+'","Response":[]}';
+        }
+        return '{"Error":"true","StatusCode":"400","ErrorMessage":"No value Found","Response":[]}';
+        
+    }
+    public static List<PullHistoryWrapper> tsve_getImageHistoryUrls(String cid){
+        string responseBody='',responseStatus='';
+        string accountName= getTechseeAccountName();
+        try{
+            
+            string accountID;
+            String authJSON;
+            widgetCalloutHandler.ResponseJSON responseInfo = new widgetCalloutHandler.ResponseJSON();
+            responseInfo = widgetCalloutHandler.getTokenForEndSessionApi(accountName);
+            System.debug('responseInfo---=='+JSON.serialize(responseInfo));
+            AuthTokenResponse authTokenResponseData;
+            if(responseInfo.responseStatus == 200){
+                authTokenResponseData = (AuthTokenResponse) JSON.deserialize(responseInfo.responseBody, AuthTokenResponse.class);
+            }
+            
+            List<PullHistoryWrapper> pullHistoryList = new List<PullHistoryWrapper>();
+            Map<String,PullHistoryWrapper> pullHistRecMap = new Map<String,PullHistoryWrapper>();
+            
+            widgetCalloutHandler.ResponseJSON pullHistoryRespone = new widgetCalloutHandler.ResponseJSON();
+            pullHistoryRespone = widgetCalloutHandler.getPullRequestHistory(null,authTokenResponseData.token,authTokenResponseData.accountId,cid,accountName);
+            System.debug('responseInfo-pullHistoryRespone--=='+pullHistoryRespone);
+            if(pullHistoryRespone.responseStatus == 200){
+                pullHistoryList = (List<PullHistoryWrapper>) JSON.deserialize(pullHistoryRespone.responseBody, List<PullHistoryWrapper>.class);
+                System.debug('responseInfo-pullHistoryList--=='+pullHistoryList);   
+                
+            }
+            
+            System.debug(' responseBody-pullHistRecMap-=='+pullHistRecMap);   
+            
+            return pullHistoryList;
+            
+            
+            
+        } catch (Exception e){
+            system.debug('---error1 message------' + e.getMessage());
+            system.debug('---error2 line #------' + e.getLineNumber());
+            return null ;
+        }
+    }
+    public static string getTechseeAccountName(){
+        list<tsve__Cloud_Connect_Users__c> userRecord = new list<tsve__Cloud_Connect_Users__c>();
+        userRecord = [SELECT Id, tsve__User__c, tsve__Techsee_Accounts__r.name FROM tsve__Cloud_Connect_Users__c
+                                  where tsve__User__c=:userinfo.getuserid() limit 1];
+         if(!userRecord.isempty()){
+         return userRecord[0].tsve__Techsee_Accounts__r.name;
+         }
+         else{
+             return null;
+         }
+      //  return 'DevAccount';
+    }
+    public class AuthTokenResponse{
+        public String accountId;
+        public String token;
+    } 
+    public static void attachImageLink(String visualHistoryId, List<String> urls){
+        List<ContentDocumentLink> cDLLsit= [SELECT ContentDocumentId, 
+                                            LinkedEntityId, 
+                                            ContentDocument.Title 
+                                            FROM ContentDocumentLink 
+                                            WHERE LinkedEntityId= :visualHistoryId
+                                            WITH SECURITY_ENFORCED
+                                            LIMIT 10000
+                                           ];
+        
+        map<String,ContentDocumentLink> titleVsContentDocumentLink =  new Map<String,ContentDocumentLink>();
+        set<string> ImageTitle = new set<string>();
+        
+        list<ContentVersion> ExistingContentVersionRecordList= new list<ContentVersion>();
+        ExistingContentVersionRecordList =[select  Title  FROM ContentVersion  WHERE FirstPublishLocationId =:visualHistoryId limit 10000];
+        for(ContentVersion  cv:ExistingContentVersionRecordList){
+            ImageTitle.add(cv.Title);
+        }
+        
+        if(cDLLsit.size()>0){
+            for(ContentDocumentLink dataCDL:cDLLsit){
+                titleVsContentDocumentLink.put(dataCDL.ContentDocument.Title,dataCDL);
+            }}
+        map<String,String> urlVsBase64 = new map<String,String>();
+        List<ContentVersion> ContentVersionList = new List<ContentVersion>();
+        List<ContentVersion> ContentVersionList2 = new List<ContentVersion> ();
+        Set<Id> ContVerFileId = new Set<Id>();
+        
+        if(test.isRunningTest()){
+            
+        }else{
+            if(urls.size()>0){
+                for(String url:urls){
+                    string base64Data = getDataUriFromUri(url);
+                    urlVsBase64.put(url,base64Data);
+                }
+            }
+        }
+        if(Schema.sObjectType.ContentVersion.fields.VersionData.isCreateable() &&
+           Schema.sObjectType.ContentVersion.fields.Title.isCreateable() &&
+           Schema.sObjectType.ContentVersion.fields.ContentLocation.isCreateable() &&
+           Schema.sObjectType.ContentVersion.fields.PathOnClient.isCreateable() &&
+           Schema.sObjectType.ContentVersion.fields.FirstPublishLocationId.isCreateable() && 
+           Schema.sObjectType.ContentVersion.fields.FirstPublishLocationId.isAccessible() &&
+           Schema.sObjectType.ContentVersion.fields.PathOnClient.isAccessible() &&
+           Schema.sObjectType.ContentVersion.fields.ContentLocation.isAccessible()&&
+           Schema.sObjectType.ContentVersion.fields.VersionData.isAccessible() &&
+           Schema.sObjectType.ContentVersion.fields.Title.isAccessible()
+          ) {
+              if(urls.size()>0){
+                  for(String url:urls){
+                      integer count = 0;
+                      count = count + 1;
+                      count = count + 1;
+                      count = count + 1;
+                      String urlVal = url;
+                      if(urlVal.containsIgnoreCase('dashboard'))
+                          urlVal = urlVal.substringBefore('-dashboard'); 
+                      else if(urlVal.containsIgnoreCase('client'))
+                          urlVal = urlVal.substringBefore('-client');
+                      urlVal = urlVal.substringAfterLast('/'); 
+                      
+                      
+                      if(!ImageTitle.contains(urlVal)){
+                          ContentVersion ContVerFile = new ContentVersion();
+                          if(test.isRunningTest()){
+                              ContVerFile.VersionData = Blob.ValueOf('test');
+                          }else{
+                              Blob payloadBlob = EncodingUtil.base64Decode(urlVsBase64.get(url));
+                              ContVerFile.VersionData = payloadBlob;
+                          }
+                          if(visualHistoryId!=null){
+                              ContVerFile.FirstPublishLocationId =  visualHistoryId;
+                          }
+                          
+                          if(test.isRunningTest()){
+                              ContVerFile.Title = 'test'; 
+                          }else{
+                              ContVerFile.Title = String.ValueOf(urlVal); 
+                          }
+                          
+                          
+                          ContVerFile.ContentLocation= 's';
+                          ContVerFile.PathOnClient= String.ValueOf(urlVal)+'.jpeg';
+                          if(titleVsContentDocumentLink.get(urlVal) == null ){
+                              ContentVersionList.add(ContVerFile);
+                          }
+                      }
+                  }
+              }
+              if(ContentVersionList.size()>0){
+                  insert ContentVersionList;
+              }
+              
+          }
+        
+    }
+    public static String getDataUriFromUri(String url) {
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(url);
+        req.setMethod('GET');
+        Http binding = new Http();
+        HttpResponse res = binding.send(req);
+        Blob image = res.getBodyAsBlob();
+        system.debug('-image response body-'+res.getBodyAsBlob());
+        system.debug('-image response body-'+res.getBody());
+        return EncodingUtil.base64Encode(image);
+    }
+}
